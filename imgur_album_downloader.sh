@@ -84,6 +84,7 @@ DownloadImages() {
 # if no passed arguments display usage
 if [[ -z $url ]]; then
     Usage
+    exit 1
 fi
 
 DownloadImages
