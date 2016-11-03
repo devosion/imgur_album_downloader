@@ -25,7 +25,7 @@ DownloadImages() {
         url="${url}/all"
 
         # download source
-        curl -s $url > $tmp
+        curl -s $url -o $tmp
 
         # grab ids of images
         ids="$(awk -F'"' '/itemscope/ {print $2}' $tmp)"
@@ -59,9 +59,13 @@ DownloadImages() {
             # create filename from direct image url
             save_as="$(echo $image | awk -F'/' '{print $4}')"
 
+            #printf "$save_as"
+
             #printf "$image $dir_name/$save_as\n"
             # download and save
-            curl -s $image > $save_as
+            curl -s "$image" -o "$save_as" 
+
+            # move to dir_name folder
             mv "${save_as}" "${dir_name}" 2>/dev/null
 
         done
