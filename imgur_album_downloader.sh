@@ -49,7 +49,7 @@ DownloadImages() {
             id_url="http://imgur.com/$id"
 
             # grab source
-            curl -s $id_url > $tmp
+            curl -s $id_url -o $tmp
 
             #printf "$item_url $tmp\n"
 
