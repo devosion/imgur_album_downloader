@@ -1,5 +1,5 @@
 #!/bin/bash
-# Another Imgur album downloader
+# Another imgur album downloader
 
 # grab passed url
 url="$1"
@@ -7,10 +7,14 @@ url="$1"
 # temporary file for source code
 tmp=".tmpsrc"
 
+# text formatting
+bold="\e[01;37m"
+rst="\e[m"
+
 # display usage and exit
 Usage() {
 
-    printf "USAGE: ./imgur_dler.sh <imgur_album>"
+    printf "${bold}USAGE${rst}: ./imgur_dler.sh imgur.com/a/<album_id>\n"
     exit 1
 
 }
@@ -19,7 +23,7 @@ Usage() {
 DownloadImages() {
 
     # check for "imgur.com/a/" in url
-    if [[ $url =~ "imgur.com/a/" ]]; then
+    if [[ $url =~ 'imgur.com/a/' ]]; then
 
         # add /all for pulling large albums
         url="${url}/all"
@@ -33,15 +37,20 @@ DownloadImages() {
         # grab a directory name
         dir_name="$(awk -F'>' '/post-title / {print $2}' $tmp | sed 's/<[/]h1$//g')"
 
-        #printf "$dir_name\n"
-
-        mkdir "$dir_name"
-
         # if empty dir_name string then request user input
         if [[ -z $dir_name ]]; then
             printf "Enter a directory name: "
             read dir_name
+
+        # if the directory exists then display message and quit
+        elif [[ -e $dir_name ]]; then
+            printf "Directory exists. Exiting.\n"
+            exit 1
+
         fi
+
+        # make directory
+        mkdir "$dir_name"
 
         for id in $ids; do
 
@@ -51,17 +60,12 @@ DownloadImages() {
             # grab source
             curl -s $id_url -o $tmp
 
-            #printf "$item_url $tmp\n"
-
             # grab url to image
             image="$(awk -F'"' '/rel="image_src"/ {print $4}' $tmp)"
 
             # create filename from direct image url
             save_as="$(echo $image | awk -F'/' '{print $4}')"
 
-            #printf "$save_as"
-
-            #printf "$image $dir_name/$save_as\n"
             # download and save
             curl -s "$image" -o "$save_as" 
 
@@ -71,13 +75,11 @@ DownloadImages() {
         done
 
     # clean up temp file
-    
     rm $tmp 2>/dev/null
 
     else
-
         # print error message and exit
-        print "This script only works with imgur albums.\n"
+        printf "This script only works with imgur albums.\n"
         Usage
         exit 1
 

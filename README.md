@@ -1,3 +1,3 @@
-#Another Imgur Album Downloader
+##Another Imgur Album Downloader
 
-USAGE: ./imgur_album_downloader url_to_imgur_album
+<b>USAGE:</b> ./imgur_album_downloader.sh imgur.com/a/\<album_id\>
